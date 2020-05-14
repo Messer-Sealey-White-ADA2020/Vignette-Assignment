@@ -1,0 +1,49 @@
+---
+title: "Messer-Sealey-White-ADA-2020-vignette-assignment"
+author: "BA White, BA Sealey, E Messer"
+date: "5/13/2020"
+output: html_document
+---
+## Files to Turn In: 
+## 1) RMD file(1) and thus html(2) for vignette module
+## 2) vignette R package (3) using 1 or more dataset and NOW 2 functions of choice 
+
+## Vignette Assignemt Objectives:
+## 1a) walk users through demonstrations of relevant analyses in module style 
+## 2a) set of functions and associated function documentation appropriate to the topic you have chosen
+## 2b) one or more relevant datasets (either data you have simulated or, preferably, real data), that you use in a module vignette about your chosen topic
+## 2c) A vignette that walks users through relevant analyses and appropriate METADATA for your package (e.g., information on dependencies, etc.)
+
+# Objectives
+
+
+# Preliminaries
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+# more libraries etc
+```
+
+# Introduce NEW dataset 
+
+
+# Specific question
+
+
+# Background on why people use this statistical approach
+
+
+# Analysis 
+
+
+# Data Visualization
+
+
+# Statistical approach
+
+
+# Infering Results 
+
+
+# Concept Overview 
+
