@@ -15,7 +15,7 @@ output: html_document
 ## 2c) A vignette that walks users through relevant analyses and appropriate METADATA for your package (e.g., information on dependencies, etc.)
 
 # Objectives
-
+network analysis blah blah blah
 
 # Preliminaries
 ```{r setup, include=FALSE}
@@ -28,7 +28,7 @@ library(tidyverse)
 
 
 # Specific question
-
+## Mean centrality of monkey associations over time
 
 # Background on why people use this statistical approach
 
