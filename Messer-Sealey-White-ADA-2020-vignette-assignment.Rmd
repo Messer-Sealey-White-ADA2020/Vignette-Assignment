@@ -25,25 +25,27 @@ library(tidyverse)
 ```
 
 # Introduce NEW dataset 
-
+Vipers were exposed to the presence of two "simulated" predators, where a preserved specimen of an avian flying and a predator touch were exposed to individual in treatment 1 and treatment 2, respectively. Dataset includes a matrix of similarity index of vipers antipredator display.    
 
 # Specific question
-## Mean centrality of monkey associations over time
+## How similar did individual vipers move their heads in response to an avian flying?
+## How similar did individual vipers move their heads in response to a predator touch?
+## How does viper mean centrality of similarity compare between the avian flying and predator touch treatments? 
 
 # Background on why people use this statistical approach
-
+# You create a similarity index using ethogram values between individuals. The ratio of antipredator behavior is divided by all the individuals antipredator behavior. 
 
 # Analysis 
 
 
 # Data Visualization
+# Our prediction is that the visualization will cluster antipredator behavior in the center - lines represent the similarity by thickness. Centrality is represented by node size. 
 
+# Statistical Approach
+# Compare similarity index between an avian flying over and being touched by a predator. 
 
-# Statistical approach
-
-
-# Infering Results 
-
+# Inferring Results 
+# Individual vipers typically behaved similarly in both treatments as expected. 
 
 # Concept Overview 
 
