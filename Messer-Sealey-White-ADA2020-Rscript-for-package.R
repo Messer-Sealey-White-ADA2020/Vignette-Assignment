@@ -1,6 +1,6 @@
 library(igraph)
 
-v <- read.csv("vipers.csv")
+v <- read.csv("vipers_hook.csv")
 
 edges1 <- (v$A)
 nodes1 <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z")
