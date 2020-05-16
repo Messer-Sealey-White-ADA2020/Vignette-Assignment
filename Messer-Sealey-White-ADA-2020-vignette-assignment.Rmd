@@ -23,7 +23,10 @@ Networks are made up of two essential components, 'nodes' (represented by symbol
 # Preliminaries
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
+library(tidyverse) # to enable tidying of data
+library(reshape2) # to use with melt function to convert matrix to objects igraph can plot
+library(igraph) # to make an igraph object ie. network visualization of matrix values. 
+
 # more libraries etc
 ```
 
@@ -50,6 +53,35 @@ v <- read.csv("vipers_hook.csv")
 # You create a similarity index using ethogram values between individuals. The ratio of antipredator behavior is divided by all the individuals antipredator behavior. 
 
 # Analysis 
+```{r}
+b <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
+b <- select(b, -names)
+head(b)
+b <- as.matrix(b)
+b[lower.tri(b, diag=TRUE)] <- NA
+r <- setNames(melt(b), c('ind1', 'ind2', 'values'))
+head(r)
+r <- filter(r, !is.na(values))
+summary(r)
+
+p <- graph_from_data_frame(r, directed = FALSE, vertices = NULL)
+
+plot(p, vertex.label = NA)
+
+d <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
+d <- select(d, -names)
+head(d)
+d <- as.matrix(d)
+d[lower.tri(d, diag=TRUE)] <- NA
+r1 <- setNames(melt(d), c('ind1', 'ind2', 'values'))
+head(r)
+r1 <- filter(r1, !is.na(values))
+summary(r1)
+
+p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
+
+plot(p1, vertex.label = NA)
+```
 
 
 # Data Visualization
