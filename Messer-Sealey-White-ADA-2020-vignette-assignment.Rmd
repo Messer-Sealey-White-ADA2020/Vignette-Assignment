@@ -45,15 +45,16 @@ v <- read.csv("vipers_hook.csv")
 ```
 
 # Specific question
-## How similar did individual vipers move their heads in response to an avian flying?
-## How similar did individual vipers move their heads in response to a predator touch?
-## How does viper mean centrality of similarity compare between the avian flying and predator touch treatments? 
+## How similar did individual vipers move their heads in response to an aerial "attack"?
+## How similar did individual vipers move their heads in response to a tactile "attack"?
+## How does viper mean centrality of similarity compare between the aerial and tactile treatments? 
 
 # Background on why people use this statistical approach
-# You create a similarity index using ethogram values between individuals. The ratio of antipredator behavior is divided by all the individuals antipredator behavior. 
+## You create a similarity index using ethogram values between individuals. The ratio of antipredator behavior is divided by all the individuals antipredator behavior. 
 
 # Analysis 
 ```{r}
+# melting data matrix for aerial treatment
 b <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
 b <- select(b, -names)
 head(b)
@@ -64,10 +65,7 @@ head(r)
 r <- filter(r, !is.na(values))
 summary(r)
 
-p <- graph_from_data_frame(r, directed = FALSE, vertices = NULL)
-
-plot(p, vertex.label = NA)
-
+# melting data matirx for tactile treatment 
 d <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
 d <- select(d, -names)
 head(d)
@@ -77,14 +75,20 @@ r1 <- setNames(melt(d), c('ind1', 'ind2', 'values'))
 head(r)
 r1 <- filter(r1, !is.na(values))
 summary(r1)
-
-p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
-
-plot(p1, vertex.label = NA)
 ```
 
 
 # Data Visualization
+```{r}
+# network plot of aerial treatment
+p <- graph_from_data_frame(r, directed = FALSE, vertices = NULL)
+plot(p, vertex.label = NA)
+
+# network plot of tactile treatment
+p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
+plot(p1, vertex.label = NA)
+```
+
 # Our prediction is that the visualization will cluster antipredator behavior in the center - lines represent the similarity by thickness. Centrality is represented by node size. 
 
 # Statistical Approach
