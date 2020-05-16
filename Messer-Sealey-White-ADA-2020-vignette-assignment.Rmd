@@ -15,7 +15,10 @@ output: html_document
 ## 2c) A vignette that walks users through relevant analyses and appropriate METADATA for your package (e.g., information on dependencies, etc.)
 
 # Objectives
-network analysis blah blah blah
+The objective of this module is to provide an overview to utilising social network analsyis in visualizing and analysing interaction data. Specifically we present 1. Tools to create and modify network diagrams, 2. methods to generate social network statsistics and make comparisons across groups... - come back here when we work out what to include...  
+
+# Background
+Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes. Usually, in the context of social networks, the nodes are individuals and the edges are some measured interactionCroft, (Croft, James & Krause, 2008). Network visualizations are called sociograms and illustrate a graphical representation of the data presented as nodes and edges. 
 
 # Preliminaries
 ```{r setup, include=FALSE}
@@ -26,6 +29,17 @@ library(tidyverse)
 
 # Introduce NEW dataset 
 Vipers were exposed to the presence of two "simulated" predators, where a preserved specimen of an avian flying and a predator touch were exposed to individual in treatment 1 and treatment 2, respectively. Dataset includes a matrix of similarity index of vipers antipredator display.    
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# read in data for avian predator
+v <- read.csv("vipers.csv")
+
+# read in data for predator touch 
+v <- read.csv("vipers_hook.csv")
+
+## Please Note: you must ensure that your row names and column names are unique in your dataframes
+```
 
 # Specific question
 ## How similar did individual vipers move their heads in response to an avian flying?

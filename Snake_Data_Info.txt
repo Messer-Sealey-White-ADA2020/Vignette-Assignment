@@ -1,0 +1,3 @@
+
+
+Here is a dataset of the similarities in anti-predator displays of Oxyrhopus melanogenys and Oxyrhopus petoalarius. The aim was to capture the snakes’ response to simulated predators: an avian predator swooping over their head, imitated by a black t-shirt; and a predator touching the snakes, imitated by a snake-hook pokes. Responses were recorded and later scored based on an ethogram that breaks up the movement of the head, body, and tail. The similarities between individuals’ head movements were calculated using Procrustes Similarity Index, which produces a matrix of comparisons between individuals. We will use the matrices produced from the head movements in the black t-shirt and tactile treatments for the walkthrough of the bbe2020 package.
