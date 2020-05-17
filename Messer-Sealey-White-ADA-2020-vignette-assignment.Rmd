@@ -17,9 +17,6 @@ output: html_document
 # Objectives
 The objective of this module is to provide an overview to utilising social network analsyis in visualizing and analysing interaction data. Specifically we present 1. Tools to create and modify network diagrams, 2. methods to generate social network statsistics and make comparisons across groups... - come back here when we work out what to include...  
 
-# Background
-Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes. Usually, in the context of social networks, the nodes are individuals and the edges are some measured interactionCroft, (Croft, James & Krause, 2008). Network visualizations are called sociograms and illustrate a graphical representation of the data presented as nodes and edges. 
-
 # Preliminaries
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -31,17 +28,17 @@ library(igraph) # to make an igraph object ie. network visualization of matrix v
 ```
 
 # Introduce NEW dataset 
-Vipers were exposed to the presence of two "simulated" predators, where a preserved specimen of an avian flying and a predator touch were exposed to individual in treatment 1 and treatment 2, respectively. Dataset includes a matrix of similarity index of vipers antipredator display.    
+Snakes were exposed to the presence of two "simulated" predators, were an individual was exposed to two treatments, one with a simulated avian predator and another with a tactile predator touch. Dataset includes a matrix of behavior similarity index between all snake's antipredator behavior.    
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-# read in data for avian predator
-v <- read.csv("vipers.csv")
+# read in data matrix for aerial treatment
+aerial <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
 
-# read in data for predator touch 
-v <- read.csv("vipers_hook.csv")
+# read in data matrix for tactile treatment 
+tactile <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
 
-## Please Note: you must ensure that your row names and column names are unique in your dataframes
+## Please Note: you must ensure that your dataframe has a first column named "names" that refers to unique row and column data points 
 ```
 
 # Specific question
@@ -49,25 +46,26 @@ v <- read.csv("vipers_hook.csv")
 ## How similar did individual vipers move their heads in response to a tactile "attack"?
 ## How does viper mean centrality of similarity compare between the aerial and tactile treatments? 
 
-# Background on why people use this statistical approach
-## Visual networks are used by researchers to represent connectedness between entities. They are presented as nodes (dots) that represent the unique entity or individual and edges (lines) that represent the link, connectedness, or interaction between the nodes. Here we specifically visualize an individuals snake's antipredator behavior divided by all individuals antipredator behavior as a ratio in a network of similarity. We will then determine if the centrality of the similarity ratio between two treatments, aerial and tactile, differs.  
+# Background
+Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes. Usually, in the context of social networks, the nodes are individuals and the edges are some measured interaction (Croft, James & Krause, 2008). Social network visualizations are called sociograms and illustrate a graphical representation of the data presented as nodes and edges. But network visualizations can be used to visulize many forms of interaction profile similarity or adjacency matrices in biologicial systems (Bass et al. 2013). Here we specifically visualize an individual snake's antipredator behavior divided by all individual's antipredator behavior represented as a ratio in a network of similarity. This visualizes the similarity of antipredator behavior among the snakes. We then determine if the centrality of the similarity ratio between two treatments, aerial and tactile, differs.  
 
-# Analysis 
+# Tidying Data for analysis  
 ```{r}
 # melting data matrix for aerial treatment
 b0 <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
-b <- select(b0, -names)
-names <- as.data.frame(b0$names)
-head(b)
-b <- as.matrix(b)
-b[lower.tri(b, diag=TRUE)] <- NA
-r <- setNames(melt(b), c('ind1', 'ind2', 'values'))
-head(r)
-r <- filter(r, !is.na(values))
-summary(r)
+colnames(aerial) <-  c("names", 1:length(b0))
+cleanaerial <- select(aerial, -names)
+head(cleanaerial)
+cleanaerial <- as.matrix(cleanaerial)
+cleanaerial[lower.tri(cleanaerial, diag=TRUE)] <- NA
+meltaerial <- setNames(melt(cleanaerial), c('ind1', 'ind2', 'values'))
+head(meltaerial)
+meltaerial <- filter(meltaerial, !is.na(values))
+summary(meltaerial)
 
 # melting data matirx for tactile treatment 
 d <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
+colnames(d) <-  c("names", 1:length(d))
 d <- select(d, -names)
 head(d)
 d <- as.matrix(d)
@@ -82,8 +80,8 @@ summary(r1)
 # Data Visualization
 ```{r}
 # network plot of aerial treatment
-p <- graph_from_data_frame(r, directed = FALSE, vertices = NULL)
-plot(p, vertex.label = NA)
+aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
+plot(aerialplot, vertex.label = NA)
 
 # network plot of tactile treatment
 p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
@@ -91,47 +89,24 @@ plot(p1, vertex.label = NA)
 
 
 library(visNetwork)
-
-#trying visnetwork
-nb <- 10
-nodes <- data.frame(id = 1:nb, label = paste("Label", 1:nb),
- group = sample(LETTERS[1:3], nb, replace = TRUE), value = 1:nb,
- title = paste0("<p>", 1:nb,"<br>Tooltip !</p>"), stringsAsFactors = FALSE)
-
-r1 <- data.frame(from = trunc(runif(nb)*(nb-1))+1,
- to = trunc(runif(nb)*(nb-1))+1,
- title = paste0("<p>", 1:nb,"<br>Edge Tooltip !</p>"))
-
-head(r1)
-
-visNetwork(nodes, r1, width = "100%") %>% 
-  visEdges(arrows = 'from')
-
-# converting igraph to visnetwork
-
-data <- toVisNetworkData(p1)
-
-visNetwork(nodes = data$nodes, edges = data$edges, height = "500px")
-
-data$edges
-data$nodes
-class(data$nodes)
-
-visNetwork(nodes = names$b0names, edges = data$edges, height = "500px")
-
-visIgraph(p1) %>% 
+# converting igraph to visnetwork for aerial treatment
+visIgraph(aerialplot, randomSeed = TRUE) %>% 
   visOptions(manipulation = TRUE)
 
-glimpse(p1)
+# converting igraph to visnetwork for tactile treatment
+visIgraph(p1, randomSeed = TRUE) %>% 
+  visOptions(manipulation = TRUE)
+
+
 ```
 
 # Our prediction is that the visualization will cluster antipredator behavior in the center - lines represent the similarity by thickness. Centrality is represented by node size. 
 
 # Statistical Approach
-# Compare similarity index between an avian flying over and being touched by a predator. 
+# Compare similarity index between an aerial and tactile treatments. 
 
 # Inferring Results 
-# Individual vipers typically behaved similarly in both treatments as expected. 
+# Individual snakes typically behaved similarly in both treatments as expected. 
 
 # Concept Overview 
 
