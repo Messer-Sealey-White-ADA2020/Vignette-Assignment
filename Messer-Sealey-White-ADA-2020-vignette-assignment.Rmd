@@ -52,8 +52,7 @@ Networks are made up of two essential components, 'nodes' (represented by symbol
 # Tidying Data for analysis  
 ```{r}
 # melting data matrix for aerial treatment
-b0 <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
-colnames(aerial) <-  c("names", 1:length(b0))
+colnames(aerial) <-  c("names", 1:length(aerial))
 cleanaerial <- select(aerial, -names)
 head(cleanaerial)
 cleanaerial <- as.matrix(cleanaerial)
