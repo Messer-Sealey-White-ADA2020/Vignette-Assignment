@@ -50,13 +50,14 @@ v <- read.csv("vipers_hook.csv")
 ## How does viper mean centrality of similarity compare between the aerial and tactile treatments? 
 
 # Background on why people use this statistical approach
-## You create a similarity index using ethogram values between individuals. The ratio of antipredator behavior is divided by all the individuals antipredator behavior. 
+## Visual networks are used by researchers to represent connectedness between entities. They are presented as nodes (dots) that represent the unique entity or individual and edges (lines) that represent the link, connectedness, or interaction between the nodes. Here we specifically visualize an individuals snake's antipredator behavior divided by all individuals antipredator behavior as a ratio in a network of similarity. We will then determine if the centrality of the similarity ratio between two treatments, aerial and tactile, differs.  
 
 # Analysis 
 ```{r}
 # melting data matrix for aerial treatment
-b <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
-b <- select(b, -names)
+b0 <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
+b <- select(b0, -names)
+names <- as.data.frame(b0$names)
 head(b)
 b <- as.matrix(b)
 b[lower.tri(b, diag=TRUE)] <- NA
@@ -87,6 +88,41 @@ plot(p, vertex.label = NA)
 # network plot of tactile treatment
 p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
 plot(p1, vertex.label = NA)
+
+
+library(visNetwork)
+
+#trying visnetwork
+nb <- 10
+nodes <- data.frame(id = 1:nb, label = paste("Label", 1:nb),
+ group = sample(LETTERS[1:3], nb, replace = TRUE), value = 1:nb,
+ title = paste0("<p>", 1:nb,"<br>Tooltip !</p>"), stringsAsFactors = FALSE)
+
+r1 <- data.frame(from = trunc(runif(nb)*(nb-1))+1,
+ to = trunc(runif(nb)*(nb-1))+1,
+ title = paste0("<p>", 1:nb,"<br>Edge Tooltip !</p>"))
+
+head(r1)
+
+visNetwork(nodes, r1, width = "100%") %>% 
+  visEdges(arrows = 'from')
+
+# converting igraph to visnetwork
+
+data <- toVisNetworkData(p1)
+
+visNetwork(nodes = data$nodes, edges = data$edges, height = "500px")
+
+data$edges
+data$nodes
+class(data$nodes)
+
+visNetwork(nodes = names$b0names, edges = data$edges, height = "500px")
+
+visIgraph(p1) %>% 
+  visOptions(manipulation = TRUE)
+
+glimpse(p1)
 ```
 
 # Our prediction is that the visualization will cluster antipredator behavior in the center - lines represent the similarity by thickness. Centrality is represented by node size. 
