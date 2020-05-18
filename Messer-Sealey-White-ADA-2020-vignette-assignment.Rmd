@@ -15,7 +15,7 @@ output: html_document
 ## 2c) A vignette that walks users through relevant analyses and appropriate METADATA for your package (e.g., information on dependencies, etc.)
 
 # Objectives
-The objective of this module is to provide an overview to utilising social network analsyis in visualizing and analysing interaction data. Specifically we present 1. Tools to create and modify network diagrams, 2. methods to generate social network statsistics and make comparisons across groups... - come back here when we work out what to include...  
+The objective of this module is to provide an overview to utilizing social network analysis to visualize and analyze interaction data. Specifically, we present 1. Tools to create and modify data to generate network diagrams, 2. Methods to generate social network statistics and make comparisons across groups.... - come back here when we work out what to include...  
 
 # Preliminaries
 ```{r setup, include=FALSE}
@@ -28,7 +28,7 @@ library(igraph) # to make an igraph object ie. network visualization of matrix v
 ```
 
 # Introduce NEW dataset 
-Snakes were exposed to the presence of two "simulated" predators, were an individual was exposed to two treatments, one with a simulated avian predator and another with a tactile predator touch. Dataset includes a matrix of behavior similarity index between all snake's antipredator behavior.    
+Snakes were exposed to the presence of two "simulated" predators, were an individual was exposed to two treatments, one with a simulated avian predator and another with a tactile predator touch. Dataset includes a matrix of behavior similarity indices between all snake's antipredator behavior centered on their head movements. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -38,16 +38,16 @@ aerial <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
 # read in data matrix for tactile treatment 
 tactile <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
 
-## Please Note: you must ensure that your dataframe has a first column named "names" that refers to unique row and column data points 
+## Please Note: you must ensure that your dataframe has a first column named "names" that refers to the labels for the unique row and column data points 
 ```
 
 # Specific question
 ## How similar did individual vipers move their heads in response to an aerial "attack"?
 ## How similar did individual vipers move their heads in response to a tactile "attack"?
-## How does viper mean centrality of similarity compare between the aerial and tactile treatments? 
+## How does viper centrality of similarity compare between the aerial and tactile treatments? 
 
 # Background
-Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes. Usually, in the context of social networks, the nodes are individuals and the edges are some measured interaction (Croft, James & Krause, 2008). Social network visualizations are called sociograms and illustrate a graphical representation of the data presented as nodes and edges. But network visualizations can be used to visulize many forms of interaction profile similarity or adjacency matrices in biologicial systems (Bass et al. 2013). Here we specifically visualize an individual snake's antipredator behavior divided by all individual's antipredator behavior represented as a ratio in a network of similarity. This visualizes the similarity of antipredator behavior among the snakes. We then determine if the centrality of the similarity ratio between two treatments, aerial and tactile, differs.  
+Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes. Usually, in the context of social networks, the nodes are individuals and the edges are some measured interaction (Croft, James & Krause, 2008). Social network visualizations are called sociograms and illustrate a graphical representation of the data (presented as nodes and edges). Network visualizations can be used to visualize many forms of interaction profile similarity or adjacency matrices in biological systems (Bass et al. 2013).   
 
 # Tidying Data for analysis  
 ```{r}
@@ -70,39 +70,50 @@ head(d)
 d <- as.matrix(d)
 d[lower.tri(d, diag=TRUE)] <- NA
 r1 <- setNames(melt(d), c('ind1', 'ind2', 'values'))
-head(r)
+head(r1)
 r1 <- filter(r1, !is.na(values))
 summary(r1)
 ```
 
 
 # Data Visualization
+Here we specifically visualize an individual snake's antipredator behavior divided by all individual's antipredator behavior towards the same type of predator represented as a ratio (or similarity index) in a sociogram. Each sociogram visualizes the similarity of antipredator behavior for either predator among the snakes. Edges represent the similarity index. Centrality is represented by node size.
+
 ```{r}
 # network plot of aerial treatment
 aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
-plot(aerialplot, vertex.label = NA)
+plot(aerialplot, vertex.label = NA, layout=layout_with_fr, main="Aerial treatment") # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
 
 # network plot of tactile treatment
 p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
-plot(p1, vertex.label = NA)
-
+plot(p1, vertex.label = NA, layout=layout_with_fr, main="Tactile treatment")  # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
 
 library(visNetwork)
 # converting igraph to visnetwork for aerial treatment
 visIgraph(aerialplot, randomSeed = TRUE) %>% 
-  visOptions(manipulation = TRUE)
+  visOptions(manipulation = TRUE) 
 
 # converting igraph to visnetwork for tactile treatment
 visIgraph(p1, randomSeed = TRUE) %>% 
-  visOptions(manipulation = TRUE)
+  visOptions(manipulation = TRUE) 
 
 
 ```
 
-# Our prediction is that the visualization will cluster antipredator behavior in the center - lines represent the similarity by thickness. Centrality is represented by node size. 
-
 # Statistical Approach
-# Compare similarity index between an aerial and tactile treatments. 
+To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected connected to well connected.
+
+
+# Compare centrality of similarity index between an aerial and tactile treatments. 
+```{r}
+# eigenvector centrality for vipers in the aerial treatment
+cent_aerial <- (eigen_centrality(aerialplot))
+
+# eigenvector centrality for vipers in the tactile treatment
+cent_tact <- (eigen_centrality(p1))  
+
+```
+
 
 # Inferring Results 
 # Individual snakes typically behaved similarly in both treatments as expected. 
