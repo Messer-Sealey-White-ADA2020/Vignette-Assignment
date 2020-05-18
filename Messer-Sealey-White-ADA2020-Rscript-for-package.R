@@ -3,38 +3,23 @@ library(tidyverse) # to enable tidying of data
 library(reshape2) # to use with melt function to convert matrix to objects igraph can plot
 library(visNetwork) 
 
+### Data 
 x <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
-
-### Tidying Data for analysis  
-#melting data matrix for aerial treatment
-colnames(aerial) <-  c("names", 1:length(aerial))
-cleanaerial <- select(aerial, -names)
-head(cleanaerial)
-cleanaerial <- as.matrix(cleanaerial)
-cleanaerial[lower.tri(cleanaerial, diag=TRUE)] <- NA
-meltaerial <- setNames(melt(cleanaerial), c('ind1', 'ind2', 'values'))
-head(meltaerial)
-meltaerial <- filter(meltaerial, !is.na(values))
-summary(meltaerial)
-###
-
 
 ### Part of the function that works
 melt_matrix_4_visNetwork <- function(z){
   colnames(x) <- c("names", 1:length(x))
-  select(x, -names)
-  setNames(melt(x), c('ind1', 'ind2', 'values'))
+  x <- select(x, -names) %>%
+  as.matrix()
+  x[lower.tri(x, diag=TRUE)] <- NA
+  x <- melt(x)
+  x <- setNames(x, c('ind1', 'ind2', 'values'))
+  x <- filter(x, !is.na(values))
+  return(x)
 }
 
 new <- melt_matrix_4_visNetwork(x)  
 head(new)
-
-
-### What didn't work in the function 
-x[lower.tri(x, diag=TRUE)] %>% NA
-setNames(melt(x), c('ind1', 'ind2', 'values'))
-filter(x, !is.na(values))
-
 
 ### PLaying around with qgraph package
 library(qgraph)
@@ -67,3 +52,23 @@ aerial <- setNames(melt(aerial), c('Source', 'Target', 'Weight'))
 aerial <- filter(aerial, !is.na(Weight))
 summary(aerial)
 qgraph(aerial, directed = FALSE, layout = "spring")
+
+
+# function play 
+Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
+
+monkeymelt <- function(g){
+  Sname <- c(Monkeys$name)
+  Sno <- c(1:length(Monkeys))
+  Source <- cbind(Sname,Sno)
+  colnames(Monkeys) <-  c("name", 1:length(Monkeys))
+  select(Monkeys, -name)
+  as.matrix(Monkeys)
+  Monkeys[lower.tri(Monkeys, diag=TRUE)] <- NA 
+  setNames(melt(Monkeys), c('Source', 'Target', 'Weight'))
+  filter(Monkeys, !is.na(Weight))
+  qgraph(Monkeys, directed = FALSE, layout = "spring")
+}
+
+mm <- monkeymelt(g)
+

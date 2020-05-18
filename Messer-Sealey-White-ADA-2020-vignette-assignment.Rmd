@@ -3,6 +3,8 @@ title: "Messer-Sealey-White-ADA-2020-vignette-assignment"
 author: "BA White, BA Sealey, E Messer"
 date: "5/13/2020"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 ## Files to Turn In: 
 ## 1) RMD file(1) and thus html(2) for vignette module
@@ -22,7 +24,8 @@ The objective of this module is to provide an overview to utilizing social netwo
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse) # to enable tidying of data
 library(reshape2) # to use with melt function to convert matrix to objects igraph can plot
-library(igraph) # to make an igraph object ie. network visualization of matrix values. 
+library(igraph) # to make an igraph object ie. network visualization of matrix values
+library(visNetwork) # to make your igraph object prettier using visNetwork
 
 # more libraries etc
 ```
@@ -42,9 +45,9 @@ tactile <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
 ```
 
 # Specific question
-## How similar did individual vipers move their heads in response to an aerial "attack"?
-## How similar did individual vipers move their heads in response to a tactile "attack"?
-## How does viper centrality of similarity compare between the aerial and tactile treatments? 
+How similar did individual vipers move their heads in response to an aerial "attack"?
+How similar did individual vipers move their heads in response to a tactile "attack"?
+How does viper centrality of similarity compare between the aerial and tactile treatments? 
 
 # Background
 Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes. Usually, in the context of social networks, the nodes are individuals and the edges are some measured interaction (Croft, James & Krause, 2008). Social network visualizations are called sociograms and illustrate a graphical representation of the data (presented as nodes and edges). Network visualizations can be used to visualize many forms of interaction profile similarity or adjacency matrices in biological systems (Bass et al. 2013).   
@@ -75,7 +78,6 @@ r1 <- filter(r1, !is.na(values))
 summary(r1)
 ```
 
-
 # Data Visualization
 Here we specifically visualize an individual snake's antipredator behavior divided by all individual's antipredator behavior towards the same type of predator represented as a ratio (or similarity index) in a sociogram. Each sociogram visualizes the similarity of antipredator behavior for either predator among the snakes. Edges represent the similarity index. Centrality is represented by node size.
 
@@ -102,20 +104,28 @@ data <- toVisNetworkData(aerialplot)
 visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama")
 
+# URL FOR NODE WEIGHT POT https://cran.r-project.org/web/packages/visNetwork/vignettes/Introduction-to-visNetwork.html
+
+```
+
+# Compare centrality of similarity index between an aerial and tactile treatments. 
+```{r}
+# eigenvector centrality for snakes in the aerial treatment
+cent_aerial <- (eigen_centrality(aerialplot))
+# eigenvector centrality for snakes in the tactile treatment
+cent_tact <- (eigen_centrality(p1))  
 ```
 
 # Statistical Approach
 To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected.
-
-
-# Compare centrality of similarity index between an aerial and tactile treatments. 
 ```{r}
+# Freedman TEST? 
+```
 
+# Another Example Using Association Data with Aesthetic Changes 
+```{r}
 # Monkeys also work 
-Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
-Sname <- c(Monkeys$name)
-Sno <- c(1:length(Monkeys))
-Source <- cbind(Sname,Sno)
+x <- read_csv("EM_monkey.csv", col_names=TRUE)
 colnames(Monkeys) <-  c("name", 1:length(Monkeys))
 Monkeys <- select(Monkeys, -name)
 Monkeys <- as.matrix(Monkeys)
@@ -124,8 +134,37 @@ Monkeys <- setNames(melt(Monkeys), c('Source', 'Target', 'Weight'))
 Monkeys <- filter(Monkeys, !is.na(Weight))
 summary(Monkeys)
 
-Monkeysp <- graph_from_data_frame(Monkeys, directed = FALSE, vertices = NULL)
-plot(aerialplot, vertex.label = NA, layout = "layout_with_fr", main="Aerial treatment") 
+melt_matrix_4_visNetwork <- function(z){
+  colnames(x) <- c("names", 1:length(x))
+  x <- select(x, -names) %>%
+  as.matrix()
+  x[lower.tri(x, diag=TRUE)] <- NA
+  x <- melt(x)
+  x <- setNames(x, c('ind1', 'ind2', 'values'))
+  x <- filter(x, !is.na(values))
+  return(x)
+}
+
+new <- melt_matrix_4_visNetwork(x)  
+head(new)
+
+
+# This is how you can replace numbers with names 
+Sname <- c(x$name)
+Sno <- as.numeric(1:nrow(x))
+Source <- bind_cols(name = Sname, number = Sno)
+Source
+
+final <- inner_join(new, Source, by = c("ind1" = "number"))
+final <- inner_join(final, Source, by = c("ind2" = "number"))
+
+final <- select(final, name.x, name.y, values)
+final
+
+
+# Visualization of Monkey interactions 
+Monkeysp <- graph_from_data_frame(final, directed = FALSE, vertices = NULL)
+plot(aerialplot, vertex.label = NA, layout = layout_with_fr, main="Aerial treatment") 
 
 datam <- toVisNetworkData(Monkeysp)
 visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
@@ -133,21 +172,13 @@ visIgraphLayout(layout = "layout_with_sugiyama")
 
 
 # Will probably use this resource https://rpubs.com/pjmurphy/313180
-# eigenvector centrality for vipers in the aerial treatment
-degree(aerialplot, v = V(aerialplot), 
+degree(Monkeysp, v = V(Monkeysp), 
       mode = c("all", "out", "in", "total"), 
       loops = TRUE, normalized = FALSE)
-
-cent_aerial <- (eigen_centrality(aerialplot))
-cent_aerial
-# eigenvector centrality for vipers in the tactile treatment
-cent_tact <- (eigen_centrality(p1))  
-
-```
-
+````
 
 # Inferring Results 
-# Individual snakes typically behaved similarly in both treatments as expected. 
+Individual snakes typically behaved significantly different between treatments as expected. 
 
 # Concept Overview 
 
