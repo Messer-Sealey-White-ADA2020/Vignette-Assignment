@@ -82,11 +82,11 @@ Here we specifically visualize an individual snake's antipredator behavior divid
 ```{r}
 # network plot of aerial treatment
 aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
-plot(aerialplot, vertex.label = NA, layout=layout_with_fr, main="Aerial treatment") # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
+plot(aerialplot, vertex.label = NA, layout = layout_with_fr, main="Aerial treatment") # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
 
 # network plot of tactile treatment
 p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
-plot(p1, vertex.label = NA, layout=layout_with_fr, main="Tactile treatment")  # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
+plot(p1, vertex.label = NA, layout = layout_with_fr, main="Tactile treatment")  # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
 
 library(visNetwork)
 # converting igraph to visnetwork for aerial treatment
@@ -97,18 +97,49 @@ visIgraph(aerialplot, randomSeed = TRUE) %>%
 visIgraph(p1, randomSeed = TRUE) %>% 
   visOptions(manipulation = TRUE) 
 
+# visnetwork for aerial treatment with new layout
+data <- toVisNetworkData(aerialplot)
+visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>%
+visIgraphLayout(layout = "layout_with_sugiyama")
 
 ```
 
 # Statistical Approach
-To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected connected to well connected.
+To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected.
 
 
 # Compare centrality of similarity index between an aerial and tactile treatments. 
 ```{r}
-# eigenvector centrality for vipers in the aerial treatment
-cent_aerial <- (eigen_centrality(aerialplot))
 
+# Monkeys also work 
+Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
+Sname <- c(Monkeys$name)
+Sno <- c(1:length(Monkeys))
+Source <- cbind(Sname,Sno)
+colnames(Monkeys) <-  c("name", 1:length(Monkeys))
+Monkeys <- select(Monkeys, -name)
+Monkeys <- as.matrix(Monkeys)
+Monkeys[lower.tri(Monkeys, diag=TRUE)] <- NA 
+Monkeys <- setNames(melt(Monkeys), c('Source', 'Target', 'Weight'))
+Monkeys <- filter(Monkeys, !is.na(Weight))
+summary(Monkeys)
+
+Monkeysp <- graph_from_data_frame(Monkeys, directed = FALSE, vertices = NULL)
+plot(aerialplot, vertex.label = NA, layout = "layout_with_fr", main="Aerial treatment") 
+
+datam <- toVisNetworkData(Monkeysp)
+visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
+visIgraphLayout(layout = "layout_with_sugiyama")
+
+
+# Will probably use this resource https://rpubs.com/pjmurphy/313180
+# eigenvector centrality for vipers in the aerial treatment
+degree(aerialplot, v = V(aerialplot), 
+      mode = c("all", "out", "in", "total"), 
+      loops = TRUE, normalized = FALSE)
+
+cent_aerial <- (eigen_centrality(aerialplot))
+cent_aerial
 # eigenvector centrality for vipers in the tactile treatment
 cent_tact <- (eigen_centrality(p1))  
 
