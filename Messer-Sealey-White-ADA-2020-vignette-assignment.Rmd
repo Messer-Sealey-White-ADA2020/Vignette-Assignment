@@ -132,23 +132,23 @@ Acent
 Tcent <- mutate(Tcent, "condition" = paste(tcondition))
 Tcent
 
-# Joining aerial and tactile treatments with their centralities and vipernames into one tibble
-viper_centrality <- full_join(Tcent, Acent, by = "name")
-viper_centrality
-viper_centrality <- as.data.frame(viper_centrality)
-viper_centrality
+# Joining aerial and tactile treatments with their centralities and snakenames into one tibble
+snake_centrality <- full_join(Tcent, Acent, by = "name")
+snake_centrality
+snake_centrality <- as.data.frame(snake_centrality)
+snake_centrality
 
 ## Re-naming the columns after cmbining the columns 
-viper_centrality <- viper_centrality %>%
+snake_centrality <- snake_centrality %>%
   rename(
     centrality_t = number.x,
     centrality_a = number.y
   )
-viper_centrality
+snake_centrality
 
-## running the wilcoxon analysis on our updated dataframe to compare viper centrality in the tactile and aerial treatment conditions  
-wilcox_centrality <- wilcox.test(viper_centrality$centrality_t, viper_centrality$centrality_a, paired=TRUE)
-
+## running the wilcoxon analysis on our updated dataframe to compare snake centrality in the tactile and aerial treatment conditions  
+wilcox_centrality <- wilcox.test(snake_centrality$centrality_t, snake_centrality$centrality_a, paired=TRUE)
+wilcox_centrality
 ```
 
 
