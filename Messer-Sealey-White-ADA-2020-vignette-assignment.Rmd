@@ -109,6 +109,8 @@ visIgraphLayout(layout = "layout_with_sugiyama") %>%
 # Compare centrality of similarity index between an aerial and tactile treatments. 
 ```{r}
 
+## EM updating this seperately... 
+
 # eigenvector centrality for snakes in the aerial treatment
 cent_aerial <- (eigen_centrality(aerialplot))
 # eigenvector centrality for snakes in the tactile treatment
