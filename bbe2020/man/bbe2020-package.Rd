@@ -4,8 +4,20 @@
 \name{bbe2020-package}
 \alias{bbe2020}
 \alias{bbe2020-package}
-\title{bbe2020: Network Visualization of AntiPredator Behavior}
+\title{bbe2020: Matrix Melting}
 \description{
-This function collapses a matrix of similarities and converts it into a format that can be read in igraph and visNetwork and plotted into a network visualization.
+This package collapses a matrix of similarities and converts it into
+    a format that can be read in igraph or visNetwork and plotted into a network 
+    visualization.
+}
+\author{
+\strong{Maintainer}: Briana Sealey \email{basealey@utexas.edu}
+
+Authors:
+\itemize{
+  \item Emily Messer \email{emily.j.e.messer@gmail.com}
+  \item Brittney White \email{bawhite@utexas.edu}
+}
+
 }
 \keyword{internal}
