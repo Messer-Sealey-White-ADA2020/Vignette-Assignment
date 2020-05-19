@@ -26,94 +26,77 @@ A group of snakes were exposed to the presence of two "simulated" predators  (ie
 knitr::opts_chunk$set(echo = TRUE)
 # read in data matrix for aerial treatment
 aerial <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
-# store the first column, which should be "names" 
-names <- as.character(aerial$names)
+# store the first column, which should be "names" for later use
+aerialnames <- as.character(aerial$names)
 # read in data matrix for tactile treatment 
 tactile <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
-# store the first column, which should be "names" 
-names <- as.character(tactile$names)
+# store the first column, which should be "names" for later use
+tactilenames <- as.character(tactile$names)
 
 ## Please Note: you must ensure that your dataframe has a first column named "names" that refers to the labels for the unique row and column data points 
 ```
 
-# Specific question
-How similar did individual vipers move their heads in response to an aerial "attack"?
-How similar did individual vipers move their heads in response to a tactile "attack"?
-How does viper centrality of similarity compare between the aerial and tactile treatments? 
+# Using the Matrices, develop specific questions:
+How similar did individual snakes move their heads in response to an aerial "attack"?
+How similar did individual snakes move their heads in response to a tactile "attack"?
+How does snake centrality of similarity compare between the aerial and tactile treatments? 
 
 # Background
 Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes. Usually, in the context of social networks, the nodes are individuals and the edges are some measured interaction (Croft, James & Krause, 2008). Social network visualizations are called sociograms and illustrate a graphical representation of the data (presented as nodes and edges). Network visualizations can be used to visualize many forms of interaction profile similarity or adjacency matrices in biological systems (Bass et al. 2013).   
 
-# Tidying Data for analysis  
+# Tidying Data Matrix for iGraph Network analysis using bbe2020
 ```{r}
 # melting data matrix for aerial treatment
-colnames(aerial) <-  c("names", 1:length(aerial))
-cleanaerial <- select(aerial, -names)
-head(cleanaerial)
-cleanaerial <- as.matrix(cleanaerial)
-cleanaerial[lower.tri(cleanaerial, diag=TRUE)] <- NA
-meltaerial <- setNames(melt(cleanaerial), c('ind1', 'ind2', 'values'))
-head(meltaerial)
-meltaerial <- filter(meltaerial, !is.na(values))
-summary(meltaerial)
+meltaerial <- meltme(aerial)
+meltaerial
 
-meltmeaerial <- meltme(aerial)
-meltmeaerial
 # melting data matirx for tactile treatment 
-d <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
-colnames(d) <-  c("names", 1:length(d))
-d <- select(d, -names)
-head(d)
-d <- as.matrix(d)
-d[lower.tri(d, diag=TRUE)] <- NA
-r1 <- setNames(melt(d), c('ind1', 'ind2', 'values'))
-head(r1)
-r1 <- filter(r1, !is.na(values))
-summary(r1)
+melttactile <- meltme(tactile)
+melttactile
 ```
 
 # Data Visualization
 Here we specifically visualize an individual snake's antipredator behavior divided by all individual's antipredator behavior towards the same type of predator represented as a ratio (or similarity index) in a sociogram. Each sociogram visualizes the similarity of antipredator behavior for either predator among the snakes. Edges represent the similarity index. Centrality is represented by node size.
 
 ```{r}
-# network plot of aerial treatment
+# iGraph network plot of aerial treatment
 aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
-plot(aerialplot, vertex.label = NA, layout = layout_on_sphere, main="Aerial treatment") # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
+# print iGraph using a sphere layout 
+plot(aerialplot, vertex.label = NA, layout = layout_on_sphere, main="Aerial treatment")
 
-# network plot of tactile treatment
-p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
-plot(p1, vertex.label = NA, layout = layout_with_fr, main="Tactile treatment")  # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
 
-library(visNetwork)
+# iGraph network plot of tactile treatment
+tactileplot <- graph_from_data_frame(melttactile, directed = FALSE, vertices = NULL)
+# print iGraph using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
+plot(tactileplot, vertex.label = NA, layout = layout_with_fr, main="Tactile treatment")
+
 # converting igraph to visnetwork for aerial treatment
-visIgraph(aerialplot, randomSeed = TRUE) %>% 
-  visOptions(manipulation = TRUE) 
-
-# converting igraph to visnetwork for tactile treatment
-visIgraph(p1, randomSeed = TRUE) %>% 
-  visOptions(manipulation = TRUE) 
-
-# visnetwork for aerial treatment with new layout
-data <- toVisNetworkData(aerialplot)
-
+aerialdata <- toVisNetworkData(aerialplot)
 ## copy column "weight" to new column "value" in list "edges"
-data$edges$width <- 20*data$edges$value # line width
-data$edges$color <- "gray" # line color
-data$nodes$label <- names
-visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>%
+aerialdata$edges$width <- 20*data$edges$value 
+## line width
+aerialdata$edges$color <- "gray" 
+## line color
+aerialdata$nodes$label <- aerialnames
+## node labels 
+visNetwork(nodes = aerialdata$nodes, edges = aerialdata$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama")
 
-visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>%
-visIgraphLayout(layout = "layout_with_sugiyama") %>% 
-  visOptions(highlightNearest = list(enabled =TRUE, degree = 20))
-
-# URL FOR NODE WEIGHT POT https://cran.r-project.org/web/packages/visNetwork/vignettes/Introduction-to-visNetwork.html
-
+# converting igraph to visnetwork for tactile treatment
+tactiledata <- toVisNetworkData(tactileplot)
+## copy column "weight" to new column "value" in list "edges"
+tactiledata$edges$width <- 20*tactiledata$edges$value 
+## line width
+tactiledata$edges$color <- "gray" 
+## line color
+tactiledata$nodes$label <- tactilenames
+## node labels 
+visNetwork(nodes = tactiledata$nodes, edges = tactiledata$edges, height = "500px") %>%
+visIgraphLayout(layout = "layout_with_sugiyama")
 ```
 
 # Compare centrality of similarity index between an aerial and tactile treatments. 
 ```{r}
-
 ## EM updating this seperately... 
 
 # eigenvector centrality for snakes in the aerial treatment
@@ -125,15 +108,15 @@ cent_tact <- (eigen_centrality(p1))
 # Statistical Approach
 To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected.
 ```{r}
-# First we need to combine our centrality measures for both the aerial and tactical conditiosn into one dataframe, so 3 columns: id, treatment (aerial or tactile), centrality score and add in the name of the dataframe in the viper_wilcox analysis below and this should (hopefully) work...
+# First we need to combine our centrality measures for both the aerial and tactical conditiosn into one dataframe, so 3 columns: id, treatment (aerial or tactile), centrality score and add in the name of the dataframe in the snake_wilcox analysis below and this should (hopefully) work...
 
 #insert new dataframe here 
 
 
-# Wilcoxon Test to compare the centrality scores for the vipers in the two different treatments 
-viper_wilcox <- # dataname  %>& 
+# Wilcoxon Test to compare the centrality scores for the snakes in the two different treatments 
+snake_wilcox <- # dataname  %>& 
   wilcox_test(centrality ~ treatment, paired = TRUE, p.adjust.method = "none")
-viper_wilcox
+snake_wilcox
 
 ```
 
