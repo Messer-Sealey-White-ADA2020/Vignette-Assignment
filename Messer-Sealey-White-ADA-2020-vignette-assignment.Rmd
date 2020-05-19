@@ -136,9 +136,6 @@ viper_centrality
 viper_centrality <- as.data.frame(viper_centrality)
 viper_centrality
 
-# install stat library for wilcox test
-library(coin)
-
 ### WARNING RAN OUT OF TIME TO FIGURE OUT WHY WILCOX_TEST() DOES NOT RUN OUR VIPER CENTRALITY DATAFRAME 
 # Wilcoxon Test to compare the centrality scores for the snakes in the two different treatments 
 #snake_wilcox_aerial <- viper_centrality %>%
