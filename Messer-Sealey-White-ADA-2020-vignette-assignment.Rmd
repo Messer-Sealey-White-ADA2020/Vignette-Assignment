@@ -16,7 +16,7 @@ library(tidyverse) # to enable tidying of data
 library(reshape2) # to use with melt function to convert matrix to objects igraph can plot
 library(igraph) # to make an igraph object ie. network visualization of matrix values
 library(visNetwork) # to make your igraph object prettier using visNetwork
-library(BBE2020)
+library(bbe2020)
 ```
 
 # Introduce NEW dataset 
@@ -54,6 +54,8 @@ head(meltaerial)
 meltaerial <- filter(meltaerial, !is.na(values))
 summary(meltaerial)
 
+meltaerial <- meltme(aerial)
+meltaerial
 # melting data matirx for tactile treatment 
 d <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
 colnames(d) <-  c("names", 1:length(d))
