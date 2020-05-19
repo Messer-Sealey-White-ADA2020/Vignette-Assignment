@@ -46,11 +46,23 @@ Networks are made up of two essential components, 'nodes' (represented by symbol
 
 # Tidying Data Matrix for iGraph Network analysis using bbe2020
 ```{r}
+melt_matrix_4_ig_visV <- function(x){
+  colnames(x) <- c("names", 1:nrow(x))
+  x <- select(x, -names) %>%
+  as.matrix()
+  x[lower.tri(x, diag=TRUE)] <- NA
+  x <- melt(x)
+  x <- setNames(x, c('ind1', 'ind2', 'values'))
+  x <- filter(x, !is.na(values))
+  return(x)
+}
 # melting data matrix for aerial treatment
-meltaerial <- meltme(aerial)
+#meltaerial <- meltme(aerial)
+meltaerial <- melt_matrix_4_ig_visV(aerial)
 meltaerial
 # melting data matirx for tactile treatment 
-melttactile <- meltme(tactile)
+#melttactile <- meltme(tactile)
+melttactile <- melt_matrix_4_ig_visV(tactile)
 melttactile
 ```
 
@@ -60,11 +72,13 @@ Here we specifically visualize an individual snake's antipredator behavior divid
 ```{r}
 # iGraph network plot of aerial treatment
 aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
+E(aerialplot)$weight = meltaerial$values
 # print iGraph using a sphere layout 
 plot(aerialplot, vertex.label = NA, layout = layout_on_sphere, main="Aerial treatment")
 
 # iGraph network plot of tactile treatment
 tactileplot <- graph_from_data_frame(melttactile, directed = FALSE, vertices = NULL)
+E(tactileplot)$weight = melttactile$values
 # print iGraph using a force-directed layout (positions the nodes so that the edges have similar lengths and there are as few crossing edges as possible)
 plot(tactileplot, vertex.label = NA, layout = layout_with_fr, main="Tactile treatment")
 
@@ -72,11 +86,9 @@ plot(tactileplot, vertex.label = NA, layout = layout_with_fr, main="Tactile trea
 aerialdata <- toVisNetworkData(aerialplot)
 ## copy column "weight" to new column "value" in list "edges"
 aerialdata$edges$width <- 20*aerialdata$edges$value 
-## line width
-aerialdata$edges$color <- "gray" 
 ## line color
-aerialdata$nodes$label <- aerialnames
-## node labels 
+aerialdata$edges$color <- "gray" 
+## print plot
 visNetwork(nodes = aerialdata$nodes, edges = aerialdata$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama")
 
@@ -84,54 +96,15 @@ visIgraphLayout(layout = "layout_with_sugiyama")
 tactiledata <- toVisNetworkData(tactileplot)
 ## copy column "weight" to new column "value" in list "edges"
 tactiledata$edges$width <- 20*tactiledata$edges$value 
-## line width
-tactiledata$edges$color <- "gray" 
 ## line color
-tactiledata$nodes$label <- tactilenames
-## node labels 
+tactiledata$edges$color <- "gray" 
+## print plot
 visNetwork(nodes = tactiledata$nodes, edges = tactiledata$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama")
 ```
 
-# Compare centrality of similarity index between an aerial and tactile treatments. 
+# Calculate eigenvalue centrality of aerial and tactile treatments. 
 ```{r}
-## figuring out aerial centrality
-#head(meltaerial) ## checking header names from aerial df
-
-#aeri <- graph_data_frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
-#E(aeri)$weight = meltaerial$values
-#head(aeri)
-#plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
-# making new igraph with aerial data
-#aeri = graph.data.frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
-#E(aeri)$weight = meltaerial$values
-#head(aeri)
-#plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
-#then in visNetwrk 
-#aeriv <- toVisNetworkData(aeri)
-#visNetwork(nodes = aeriv$nodes, edges = aeriv$edges, height = "500px") %>%
-# visIgraphLayout(layout = "layout_with_sugiyama")
-# working out centrality 
-#acentrality <- evcent(aeri)$vector
-#head(acentrality)
-#acentrality
-
-## figuring out tactical centrality
-#head(r1) ## checking header names from tactical df
-# making new igraph with aerial data
-#tacti = graph.data.frame(r1[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
-#E(tacti)$weight = r1$values
-#head(tacti)
-#plot(tacti, vertex.label = NA, layout = layout_with_fr, main="Taactical Treatment") 
-#then in visNetwrk 
-#tactiv <- toVisNetworkData(tacti)
-#visNetwork(nodes = tactiv$nodes, edges = tactiv$edges, height = "500px") %>%
-# visIgraphLayout(layout = "layout_with_sugiyama")
-# working out centrality 
-#tcentrality <- evcent(tacti)$vector
-#head(tcentrality)
-#tcentrality
-
 # aerial treatment 
 centralityaerialplot <- evcent(aerialplot)$vector
 centralityaerialplot
@@ -141,23 +114,15 @@ centralitytactileplot <- evcent(tactileplot)$vector
 centralitytactileplot
 ```
 
-# Statistical Approach
+# Calculate centrality of similarity index between an aerial and tactile treatments. 
 To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected.
 ```{r}
 # First, we need to combine our centrality measures for both the aerial and tactical conditions into one dataframe, so 3 columns: id, treatment (aerial or tactile), centrality score and add in the name of the dataframe in the snake_wilcox analysis below and this should (hopefully) work...
+# names and centrility score for aerial treatment
+Acent <- bind_cols(name = aerialnames, number = centralityaerialplot)
 
-#insert new dataframe here
-######
-######
-######
-# Ok the below is working to get the centrality measures into ne table:
-Aname <- c(aerial$names)
-Tname <- c(tactile$names)
-
-Acent <- bind_cols(name = Aname, number = acentrality)
-Acent
-Tcent <- bind_cols(name = Tname, number = tcentrality)
-Tcent
+# names and centrility score for aerial treatment
+Tcent <- bind_cols(name = tactilenames, number = centralitytactileplot)
 
 acondition = 'aerial'
 tcondition = 'tactile'
@@ -166,25 +131,22 @@ Acent
 Tcent <- mutate(Tcent, "condition" = paste(tcondition))
 Tcent
 
-viper_centrality <- inner_join(Tcent, Acent, by = "name")
+viper_centrality <- full_join(Tcent, Acent, by = "name")
+viper_centrality
+viper_centrality <- as.data.frame(viper_centrality)
 viper_centrality
 
-viper_centrality <- viper_centrality %>%
-  rename(
-   centrality_t = number.x,
-   centrality_a = number.y
-  )
-viper_centrality
+# install stat library for wilcox test
+library(coin)
 
-## now getting viper centrality to move from columns to stacked on top of each other is where I am stuck...
-
-
-
+### WARNING RAN OUT OF TIME TO FIGURE OUT WHY WILCOX_TEST() DOES NOT RUN OUR VIPER CENTRALITY DATAFRAME 
 # Wilcoxon Test to compare the centrality scores for the snakes in the two different treatments 
-snake_wilcox <- # dataname  %>& 
-  wilcox_test(centrality ~ treatment, paired = TRUE, p.adjust.method = "none")
-snake_wilcox
-
+#snake_wilcox_aerial <- viper_centrality %>%
+#  wilcox_test(number.y ~ condition.y, paired = TRUE, p.adjust.method = "none")
+#snake_wilcox_aerial
+#snake_wilcox_tactile <- viper_centrality %>%
+#  wilcox_test(number.x ~ condition.x, paired = TRUE, p.adjust.method = "none")
+#snake_wilcox_tactile
 ```
 
 
@@ -193,15 +155,16 @@ In this new example, we showcase a selection of different aesthetic changes you 
 ```{r}
 # Read in another dataset, here we use monkeys 
 Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
-new <- meltme(new)
-head(new)
+#new <- meltme(new)
+Monkeys <- melt_matrix_4_ig_visV(Monkeys)
+head(Monkeys)
 
 # This is how you can replace numbers with names 
 Sname <- c(Monkeys$name)
 Sno <- as.numeric(1:nrow(Monkeys))
 Source <- bind_cols(name = Sname, number = Sno)
 Source
-final <- inner_join(new, Source, by = c("ind1" = "number"))
+final <- inner_join(Monkeys, Source, by = c("ind1" = "number"))
 final <- inner_join(final, Source, by = c("ind2" = "number"))
 final <- select(final, name.x, name.y, values)
 final
@@ -235,9 +198,9 @@ head(centrality)
 Individual snakes typically behaved significantly different between treatments as expected. 
 
 # Concept Overview 
-# Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by  lines between the nodes). These lines typically indicate an interaction between the nodes
-# Using the melt function bbe2020() to convert matrix data into a dataframe for network visualization & analysis
-# Using {igraph}: graph_from_data_frame() and {visNetwork}: toVisNetworkData() to generate sociograms 
-# Aesthetic changes in visNetwork sociograms <add in brief code example here>
-# Eigenvector centrality statistics in igraph evcent()$vector
-# The wilcox_test() is a non-parametric statistical test which compares two paired groups 
+- Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by  lines between the nodes). These lines typically indicate an interaction between the nodes
+- Using the melt function bbe2020() to convert matrix data into a dataframe for network visualization & analysis
+- Using {igraph}: graph_from_data_frame() and {visNetwork}: toVisNetworkData() to generate sociograms 
+- Aesthetic changes in visNetwork sociograms <add in brief code example here>
+- Eigenvector centrality statistics in igraph evcent()$vector
+- The wilcox_test() is a non-parametric statistical test which compares two paired groups 
