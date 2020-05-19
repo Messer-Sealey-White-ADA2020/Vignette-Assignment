@@ -37,7 +37,7 @@ Snakes were exposed to the presence of two "simulated" predators, were an indivi
 knitr::opts_chunk$set(echo = TRUE)
 # read in data matrix for aerial treatment
 aerial <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
-
+names <- as.character(aerial$names)
 # read in data matrix for tactile treatment 
 tactile <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
 
@@ -84,6 +84,7 @@ Here we specifically visualize an individual snake's antipredator behavior divid
 ```{r}
 # network plot of aerial treatment
 aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
+aerialplot <- simplify(aerialplot, remove.multiple = T, remove.loops = T)
 plot(aerialplot, vertex.label = NA, layout = layout_with_fr, main="Aerial treatment") # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
 
 # network plot of tactile treatment
@@ -101,8 +102,19 @@ visIgraph(p1, randomSeed = TRUE) %>%
 
 # visnetwork for aerial treatment with new layout
 data <- toVisNetworkData(aerialplot)
+
+## copy column "weight" to new column "value" in list "edges"
+data$edges$width <- 20*data$edges$value # line width
+data$edges$color <- "gray" # line color
+data$nodes$label <- names
 visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama")
+
+
+
+visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>%
+visIgraphLayout(layout = "layout_with_sugiyama") %>% 
+  visOptions(highlightNearest = list(enabled =TRUE, degree = 20))
 
 # URL FOR NODE WEIGHT POT https://cran.r-project.org/web/packages/visNetwork/vignettes/Introduction-to-visNetwork.html
 
@@ -125,7 +137,7 @@ To determine if there is any significant difference between the predator respons
 # Another Example Using Association Data with Aesthetic Changes 
 ```{r}
 # Monkeys also work 
-x <- read_csv("EM_monkey.csv", col_names=TRUE)
+Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
 colnames(Monkeys) <-  c("name", 1:length(Monkeys))
 Monkeys <- select(Monkeys, -name)
 Monkeys <- as.matrix(Monkeys)
