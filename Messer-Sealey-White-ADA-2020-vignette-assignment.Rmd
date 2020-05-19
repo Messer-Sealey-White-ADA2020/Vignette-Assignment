@@ -7,7 +7,7 @@ editor_options:
   chunk_output_type: console
 ---
 # Objectives
-The objective of this module is to provide an overview to utilizing social network analysis to visualize and analyze interaction data. Specifically, we present 1. Tools to create and modify data to generate network diagrams, 2. Methods to generate social network statistics and make comparisons across groups.... - come back here when we work out what to include...  
+The objective of this module is to provide an overview to utilizing network analysis to visualize and analyze interaction, connected, or similarity data. Specifically, we present 1. Tools to modify a data matrix to generate network diagrams, 2. Applying various aesthetics to visNetwork diagrams, and 3. Generate Wilcoxon Test statistics make comparisons across groups.
 
 # Preliminaries
 ```{r setup, include=FALSE}
@@ -16,19 +16,22 @@ library(tidyverse) # to enable tidying of data
 library(reshape2) # to use with melt function to convert matrix to objects igraph can plot
 library(igraph) # to make an igraph object ie. network visualization of matrix values
 library(visNetwork) # to make your igraph object prettier using visNetwork
-library(bbe2020)
+library(bbe2020) # adds functionality to melt by converting a matrix generated in other softwares or elsewhere and converting to a form easily used by igraph
 ```
 
-# Introduce NEW dataset 
-Snakes were exposed to the presence of two "simulated" predators, were an individual was exposed to two treatments, one with a simulated avian predator and another with a tactile predator touch. Dataset includes a matrix of behavior similarity indices between all snake's antipredator behavior centered on their head movements. 
+# Introduce dataset 
+A group of snakes were exposed to the presence of two "simulated" predators  (ie. two treatments), one with a simulated potential aerial "attack" and another with a simulated tactile "attack". A matrix was generated using Pearson correlation coefficient to calculate the behavior similarity indices between all snake's antipredator head movement behavior.  
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # read in data matrix for aerial treatment
 aerial <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
+# store the first column, which should be "names" 
 names <- as.character(aerial$names)
 # read in data matrix for tactile treatment 
 tactile <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
+# store the first column, which should be "names" 
+names <- as.character(tactile$names)
 
 ## Please Note: you must ensure that your dataframe has a first column named "names" that refers to the labels for the unique row and column data points 
 ```
@@ -54,8 +57,8 @@ head(meltaerial)
 meltaerial <- filter(meltaerial, !is.na(values))
 summary(meltaerial)
 
-meltaerial <- meltme(aerial)
-meltaerial
+meltmeaerial <- meltme(aerial)
+meltmeaerial
 # melting data matirx for tactile treatment 
 d <- read_csv("tactiletreatments_heads2020f.csv", col_names=TRUE)
 colnames(d) <-  c("names", 1:length(d))
