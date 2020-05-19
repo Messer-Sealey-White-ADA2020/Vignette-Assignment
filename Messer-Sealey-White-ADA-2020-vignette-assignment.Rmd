@@ -49,7 +49,6 @@ Networks are made up of two essential components, 'nodes' (represented by symbol
 # melting data matrix for aerial treatment
 meltaerial <- meltme(aerial)
 meltaerial
-unique(meltaerial$ind2)
 # melting data matirx for tactile treatment 
 melttactile <- meltme(tactile)
 melttactile
@@ -72,7 +71,7 @@ plot(tactileplot, vertex.label = NA, layout = layout_with_fr, main="Tactile trea
 # converting igraph to visnetwork for aerial treatment
 aerialdata <- toVisNetworkData(aerialplot)
 ## copy column "weight" to new column "value" in list "edges"
-aerialdata$edges$width <- 20*data$edges$value 
+aerialdata$edges$width <- 20*aerialdata$edges$value 
 ## line width
 aerialdata$edges$color <- "gray" 
 ## line color
@@ -98,6 +97,11 @@ visIgraphLayout(layout = "layout_with_sugiyama")
 ```{r}
 ## figuring out aerial centrality
 head(meltaerial) ## checking header names from aerial df
+
+aeri <- graph_from_data_frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
+E(aeri)$weight = meltaerial$values
+head(aeri)
+plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
 # making new igraph with aerial data
 aeri = graph.data.frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
 E(aeri)$weight = meltaerial$values
