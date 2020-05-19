@@ -1,4 +1,5 @@
 Package: bbe2020
+<<<<<<< HEAD
 Title: Network Visualization of AntiPredator Behavior
 Version: 0.0.1.0
 Author:
@@ -14,15 +15,28 @@ Author:
     email = "basealey@utexas.edu", role = c("aut", "cre"))
 Maintainer: Emily Messer, Brittney White, Briana Sealey
 Description: This function collapses a matrix of similarities and converts it into a format that can be read in igraph and visNetwork and plotted into a network visualization.
+=======
+Title: Matrix Melting
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Emily", "Messer", email = "emily.j.e.messer@gmail.com", role = "aut"),
+    person("Brittney", "White", email = "bawhite@utexas.edu", role = "aut"),
+    person("Briana", "Sealey", email = "basealey@utexas.edu", role = "cre"))
+Description: This package collapses a matrix of similarities and converts it into
+    a format that can be read in igraph or visNetwork and plotted into a network 
+    visualization.
+>>>>>>> a2b7f7f6f5de9d0bb6270602f8aa663787d420d9
 Depends: R (>= 3.5)
-License: None
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Suggests: 
-    igraph,
-    reshape2,
-    tidyverse,
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
+Imports: 
+    reshape2,
+    igraph,
+    visNetwork,
+    tibble,
+    readr,
+    dplyr,
+    stats
