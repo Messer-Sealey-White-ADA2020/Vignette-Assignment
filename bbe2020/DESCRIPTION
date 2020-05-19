@@ -1,0 +1,28 @@
+Package: bbe2020
+Title: Network Visualization of AntiPredator Behavior
+Version: 0.0.1.0
+Author:
+    person(given = "Emily",
+    family = "Messer",
+    role = c("aut", "cre"),
+    email = "emily.j.e.messer@gmail.com")
+    person(given = "Brittney", 
+    family = "White", 
+    email = "bawhite@utexas.edu", role = c("aut", "cre"))
+    person(given = "Briana"
+    family = "Sealey", 
+    email = "basealey@utexas.edu", role = c("aut", "cre"))
+Maintainer: Emily Messer, Brittney White, Briana Sealey
+Description: This function collapses a matrix of similarities and converts it into a format that can be read in igraph and visNetwork and plotted into a network visualization.
+Depends: R (>= 3.5)
+License: None
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    igraph,
+    reshape2,
+    tidyverse,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.1.0
