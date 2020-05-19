@@ -179,4 +179,9 @@ degree(Monkeysp, v = V(Monkeysp),
 Individual snakes typically behaved significantly different between treatments as expected. 
 
 # Concept Overview 
-
+Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes
+Using the melt function bbe2020() to convert matrix data into a dataframe for network visualization & analysis
+Using {igraph}: graph_from_data_frame() and {visNetwork}: toVisNetworkData() to generate sociograms 
+Aesthetic changes in visNetwork sociograms <add in brief code example here>
+Centrality statistics in igraph <code example here>
+The wilcox_test() is a non-parametric statistical test which compares two paired groups 
