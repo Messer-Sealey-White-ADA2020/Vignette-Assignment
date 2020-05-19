@@ -6,16 +6,6 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-## Files to Turn In: 
-## 1) RMD file(1) and thus html(2) for vignette module
-## 2) vignette R package (3) using 1 or more dataset and NOW 2 functions of choice 
-
-## Vignette Assignemt Objectives:
-## 1a) walk users through demonstrations of relevant analyses in module style 
-## 2a) set of functions and associated function documentation appropriate to the topic you have chosen
-## 2b) one or more relevant datasets (either data you have simulated or, preferably, real data), that you use in a module vignette about your chosen topic
-## 2c) A vignette that walks users through relevant analyses and appropriate METADATA for your package (e.g., information on dependencies, etc.)
-
 # Objectives
 The objective of this module is to provide an overview to utilizing social network analysis to visualize and analyze interaction data. Specifically, we present 1. Tools to create and modify data to generate network diagrams, 2. Methods to generate social network statistics and make comparisons across groups.... - come back here when we work out what to include...  
 
@@ -26,8 +16,7 @@ library(tidyverse) # to enable tidying of data
 library(reshape2) # to use with melt function to convert matrix to objects igraph can plot
 library(igraph) # to make an igraph object ie. network visualization of matrix values
 library(visNetwork) # to make your igraph object prettier using visNetwork
-
-# more libraries etc
+library(BBE2020)
 ```
 
 # Introduce NEW dataset 
@@ -84,7 +73,7 @@ Here we specifically visualize an individual snake's antipredator behavior divid
 ```{r}
 # network plot of aerial treatment
 aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
-plot(aerialplot, vertex.label = NA, layout = layout_with_fr, main="Aerial treatment") # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
+plot(aerialplot, vertex.label = NA, layout = layout_on_sphere, main="Aerial treatment") # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
 
 # network plot of tactile treatment
 p1 <- graph_from_data_frame(r1, directed = FALSE, vertices = NULL)
@@ -108,8 +97,6 @@ data$edges$color <- "gray" # line color
 data$nodes$label <- names
 visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama")
-
-
 
 visNetwork(nodes = data$nodes, edges = data$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama") %>% 
