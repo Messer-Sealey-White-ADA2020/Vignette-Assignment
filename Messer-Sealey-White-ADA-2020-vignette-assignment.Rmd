@@ -146,7 +146,39 @@ To determine if there is any significant difference between the predator respons
 ```{r}
 # First we need to combine our centrality measures for both the aerial and tactical conditiosn into one dataframe, so 3 columns: id, treatment (aerial or tactile), centrality score and add in the name of the dataframe in the snake_wilcox analysis below and this should (hopefully) work...
 
-#insert new dataframe here 
+#insert new dataframe here
+######
+######
+######
+# Ok the below is working to get the centrality measures into ne table:
+Aname <- c(aerial$names)
+Tname <- c(tactile$names)
+
+Acent <- bind_cols(name = Aname, number = acentrality)
+Acent
+Tcent <- bind_cols(name = Tname, number = tcentrality)
+Tcent
+
+acondition = 'aerial'
+tcondition = 'tactile'
+Acent <- mutate(Acent, "condition" = paste(acondition))
+Acent
+Tcent <- mutate(Tcent, "condition" = paste(tcondition))
+Tcent
+
+viper_centrality <- inner_join(Tcent, Acent, by = "name")
+viper_centrality
+
+viper_centrality <- viper_centrality %>%
+  rename(
+   centrality_t = number.x,
+   centrality_a = number.y
+  )
+viper_centrality
+
+## now getting viper centrality to move from columns to stacked on top of each other is where I am stuck...
+
+
 
 # Wilcoxon Test to compare the centrality scores for the snakes in the two different treatments 
 snake_wilcox <- # dataname  %>& 
