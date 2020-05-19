@@ -103,7 +103,7 @@ visNetwork(nodes = tactiledata$nodes, edges = tactiledata$edges, height = "500px
 visIgraphLayout(layout = "layout_with_sugiyama")
 ```
 
-# Calculate eigenvalue centrality of aerial and tactile treatments. 
+# Calculate eigenvalue centrality for the aerial and tactile treatments. 
 ```{r}
 # aerial treatment 
 centralityaerialplot <- evcent(aerialplot)$vector
@@ -114,14 +114,14 @@ centralitytactileplot <- evcent(tactileplot)$vector
 centralitytactileplot
 ```
 
-# Calculate centrality of similarity index between an aerial and tactile treatments. 
+# Compare centrality of similarity indices of anti-predator behavior between aerial and tactile treatments. 
 To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected.
 ```{r}
 # First, we need to combine our centrality measures for both the aerial and tactical treatment conditions into one dataframe
-# names and centraility score for aerial treatment condition
+# names and centrality score for aerial treatment condition
 Acent <- bind_cols(name = aerialnames, number = centralityaerialplot)
 
-# names and centriality score for tactile treatment condition
+# names and centrality score for tactile treatment condition
 Tcent <- bind_cols(name = tactilenames, number = centralitytactileplot)
 
 # naming the different centrality measures for each treatment condition
@@ -132,13 +132,13 @@ Acent
 Tcent <- mutate(Tcent, "condition" = paste(tcondition))
 Tcent
 
-# Joining aerial and tactile treatments with their centralities and snakenames into one tibble
+# Joining aerial and tactile treatments with their centralities and snake names into one tibble
 snake_centrality <- full_join(Tcent, Acent, by = "name")
 snake_centrality
 snake_centrality <- as.data.frame(snake_centrality)
 snake_centrality
 
-## Re-naming the columns after cmbining the columns 
+## Re-naming the columns after combining the columns 
 snake_centrality <- snake_centrality %>%
   rename(
     centrality_t = number.x,
@@ -152,11 +152,11 @@ wilcox_centrality
 ```
 
 
-# Another Example Using Association to Demonstrate Aesthetic Changes 
+# Another Example Using Association Indices to Demonstrate Aesthetic Changes 
 In this new example, we showcase a selection of different aesthetic changes you can utilize in your visualization of network data based on monkey association patterns. 
 ```{r}
 # Read in another dataset, here we use monkeys 
-Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
+Monkeys <- read_csv("monkey.csv", col_names=TRUE)
 Sname <- c(Monkeys$name)
 Sno <- as.numeric(1:nrow(Monkeys))
 # new <- meltme(new)
@@ -196,7 +196,7 @@ head(centrality)
 Individual snakes typically behaved significantly different between treatments as expected. 
 
 # Concept Overview 
-- Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by  lines between the nodes). These lines typically indicate an interaction between the nodes
+- Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes
 - Using the melt function bbe2020() to convert matrix data into a dataframe for network visualization & analysis
 - Using {igraph}: graph_from_data_frame() and {visNetwork}: toVisNetworkData() to generate sociograms 
 - Aesthetic changes in visNetwork sociograms edge$color , edge$width
