@@ -84,7 +84,6 @@ Here we specifically visualize an individual snake's antipredator behavior divid
 ```{r}
 # network plot of aerial treatment
 aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
-aerialplot <- simplify(aerialplot, remove.multiple = T, remove.loops = T)
 plot(aerialplot, vertex.label = NA, layout = layout_with_fr, main="Aerial treatment") # using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
 
 # network plot of tactile treatment
