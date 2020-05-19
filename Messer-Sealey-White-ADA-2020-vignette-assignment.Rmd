@@ -22,7 +22,7 @@ library(bbe2020) # adds functionality to melt by converting a matrix generated i
 # Introduce dataset 
 A group of snakes were exposed to the presence of two "simulated" predators (i.e. two treatments), one with a simulated potential aerial "attack" and another with a simulated tactile "attack". A matrix was generated using Pearson correlation coefficient to calculate the behavior similarity indices between all snake's antipredator head movement behavior.  
 
-```{r setup, include=FALSE}
+```{r}
 knitr::opts_chunk$set(echo = TRUE)
 # read in data matrix for aerial treatment
 aerial <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
@@ -155,17 +155,19 @@ In this new example, we showcase a selection of different aesthetic changes you 
 ```{r}
 # Read in another dataset, here we use monkeys 
 Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
-#new <- meltme(new)
+Sname <- c(Monkeys$name)
+Sno <- as.numeric(1:nrow(Monkeys))
+# new <- meltme(new)
 Monkeys <- melt_matrix_4_ig_visV(Monkeys)
 head(Monkeys)
 
 # This is how you can replace numbers with names 
-Sname <- c(Monkeys$name)
-Sno <- as.numeric(1:nrow(Monkeys))
 Source <- bind_cols(name = Sname, number = Sno)
 Source
 final <- inner_join(Monkeys, Source, by = c("ind1" = "number"))
+final
 final <- inner_join(final, Source, by = c("ind2" = "number"))
+final
 final <- select(final, name.x, name.y, values)
 final
 
@@ -178,10 +180,9 @@ visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama")
 
 # New monkey graph: 
-#igraph
+# igraph
 monk = graph.data.frame(final[,c('name.x','name.y')], directed = FALSE, vertices = NULL)
 E(monk)$weight = final$values
-head(monk)
 plot(monk, vertex.label = NA, layout = layout_with_fr, main="Monkeys") 
 
 # then in visNetwrk 
