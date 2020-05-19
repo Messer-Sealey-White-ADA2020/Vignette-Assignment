@@ -96,12 +96,38 @@ visIgraphLayout(layout = "layout_with_sugiyama")
 
 # Compare centrality of similarity index between an aerial and tactile treatments. 
 ```{r}
-## EM updating this seperately... 
+## figuring out aerial centrality
+head(meltaerial) ## checking header names from aerial df
+# making new igraph with aerial data
+aeri = graph.data.frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
+E(aeri)$weight = meltaerial$values
+head(aeri)
+plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
+#then in visNetwrk 
+aeriv <- toVisNetworkData(aeri)
+visNetwork(nodes = aeriv$nodes, edges = aeriv$edges, height = "500px") %>%
+  visIgraphLayout(layout = "layout_with_sugiyama")
+# working out centrality 
+acentrality <- evcent(aeri)$vector
+head(acentrality)
+acentrality
 
-# eigenvector centrality for snakes in the aerial treatment
-cent_aerial <- (eigen_centrality(aerialplot))
-# eigenvector centrality for snakes in the tactile treatment
-cent_tact <- (eigen_centrality(p1))  
+## figuring out tactical centrality
+head(r1) ## checking header names from tactical df
+# making new igraph with aerial data
+tacti = graph.data.frame(r1[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
+E(tacti)$weight = r1$values
+head(tacti)
+plot(tacti, vertex.label = NA, layout = layout_with_fr, main="Taactical Treatment") 
+#then in visNetwrk 
+tactiv <- toVisNetworkData(tacti)
+visNetwork(nodes = tactiv$nodes, edges = tactiv$edges, height = "500px") %>%
+  visIgraphLayout(layout = "layout_with_sugiyama")
+# working out centrality 
+tcentrality <- evcent(tacti)$vector
+head(tcentrality)
+tcentrality
+
 ```
 
 # Statistical Approach
@@ -119,7 +145,7 @@ snake_wilcox
 ```
 
 
-# Another Example Using Association to Demonstarte Aesthetic Changes 
+# Another Example Using Association to Demonstrate Aesthetic Changes 
 In this new example, we showcase a selection of different aesthetic changes you can utilize in your visualization of network data based on monkey association patterns. 
 ```{r}
 # Read n another dataset, here we use monkeys 
