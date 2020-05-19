@@ -195,7 +195,7 @@ visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
 
 # working out centrality 
 centrality <- evcent(monk)$vector
-head(centrality)
+head(centrality) 
 
 ````
 
