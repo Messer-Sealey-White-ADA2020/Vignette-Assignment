@@ -156,7 +156,7 @@ wilcox_centrality
 In this new example, we showcase a selection of different aesthetic changes you can utilize in your visualization of network data based on monkey association patterns. 
 ```{r}
 # Read in another dataset, here we use monkeys 
-Monkeys <- read_csv("monkey.csv", col_names=TRUE)
+Monkeys <- read_csv("monkeyf.csv", col_names=TRUE)
 Sname <- c(Monkeys$name)
 Sno <- as.numeric(1:nrow(Monkeys))
 # new <- meltme(new)
