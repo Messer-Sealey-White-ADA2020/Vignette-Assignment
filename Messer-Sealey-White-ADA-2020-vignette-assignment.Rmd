@@ -4,7 +4,7 @@ author: "BA White, BA Sealey, E Messer"
 date: "5/13/2020"
 output: html_document
 editor_options: 
-  chunk_output_type: console
+chunk_output_type: console
 ---
 # Objectives
 The objective of this module is to provide an overview to utilizing network analysis to visualize and analyze interaction, connected, or similarity data. Specifically, we present 1. Tools to modify a data matrix to generate network diagrams, 2. Applying various aesthetics to visNetwork diagrams, and 3. Generate Wilcoxon Test statistics make comparisons across groups.
@@ -96,42 +96,49 @@ visIgraphLayout(layout = "layout_with_sugiyama")
 # Compare centrality of similarity index between an aerial and tactile treatments. 
 ```{r}
 ## figuring out aerial centrality
-head(meltaerial) ## checking header names from aerial df
+#head(meltaerial) ## checking header names from aerial df
 
-aeri <- graph_data_frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
-E(aeri)$weight = meltaerial$values
-head(aeri)
-plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
+#aeri <- graph_data_frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
+#E(aeri)$weight = meltaerial$values
+#head(aeri)
+#plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
 # making new igraph with aerial data
-aeri = graph.data.frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
-E(aeri)$weight = meltaerial$values
-head(aeri)
-plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
+#aeri = graph.data.frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
+#E(aeri)$weight = meltaerial$values
+#head(aeri)
+#plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
 #then in visNetwrk 
-aeriv <- toVisNetworkData(aeri)
-visNetwork(nodes = aeriv$nodes, edges = aeriv$edges, height = "500px") %>%
-  visIgraphLayout(layout = "layout_with_sugiyama")
+#aeriv <- toVisNetworkData(aeri)
+#visNetwork(nodes = aeriv$nodes, edges = aeriv$edges, height = "500px") %>%
+# visIgraphLayout(layout = "layout_with_sugiyama")
 # working out centrality 
-acentrality <- evcent(aeri)$vector
-head(acentrality)
-acentrality
+#acentrality <- evcent(aeri)$vector
+#head(acentrality)
+#acentrality
 
 ## figuring out tactical centrality
-head(r1) ## checking header names from tactical df
+#head(r1) ## checking header names from tactical df
 # making new igraph with aerial data
-tacti = graph.data.frame(r1[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
-E(tacti)$weight = r1$values
-head(tacti)
-plot(tacti, vertex.label = NA, layout = layout_with_fr, main="Taactical Treatment") 
+#tacti = graph.data.frame(r1[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
+#E(tacti)$weight = r1$values
+#head(tacti)
+#plot(tacti, vertex.label = NA, layout = layout_with_fr, main="Taactical Treatment") 
 #then in visNetwrk 
-tactiv <- toVisNetworkData(tacti)
-visNetwork(nodes = tactiv$nodes, edges = tactiv$edges, height = "500px") %>%
-  visIgraphLayout(layout = "layout_with_sugiyama")
+#tactiv <- toVisNetworkData(tacti)
+#visNetwork(nodes = tactiv$nodes, edges = tactiv$edges, height = "500px") %>%
+# visIgraphLayout(layout = "layout_with_sugiyama")
 # working out centrality 
-tcentrality <- evcent(tacti)$vector
-head(tcentrality)
-tcentrality
+#tcentrality <- evcent(tacti)$vector
+#head(tcentrality)
+#tcentrality
 
+# aerial treatment 
+centralityaerialplot <- evcent(aerialplot)$vector
+centralityaerialplot
+
+# tactile treatment 
+centralitytactileplot <- evcent(tactileplot)$vector
+centralitytactileplot
 ```
 
 # Statistical Approach
@@ -162,10 +169,8 @@ Sname <- c(Monkeys$name)
 Sno <- as.numeric(1:nrow(Monkeys))
 Source <- bind_cols(name = Sname, number = Sno)
 Source
-
 final <- inner_join(new, Source, by = c("ind1" = "number"))
 final <- inner_join(final, Source, by = c("ind2" = "number"))
-
 final <- select(final, name.x, name.y, values)
 final
 
@@ -184,7 +189,7 @@ E(monk)$weight = final$values
 head(monk)
 plot(monk, vertex.label = NA, layout = layout_with_fr, main="Monkeys") 
 
-#then in visNetwrk 
+# then in visNetwrk 
 datam <- toVisNetworkData(monk)
 visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
   visIgraphLayout(layout = "layout_with_sugiyama")
@@ -192,12 +197,6 @@ visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
 # working out centrality 
 centrality <- evcent(monk)$vector
 head(centrality) 
-
-centralityaerialplot <- evcent(aerialplot)$vector
-centralityaerialplot
-
-centralitytactileplot <- evcent(tactileplot)$vector
-centralitytactileplot
 ````
 
 # Inferring Results 
