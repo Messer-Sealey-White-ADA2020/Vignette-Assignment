@@ -172,7 +172,7 @@ final <- select(final, name.x, name.y, values)
 final
 
 # Visualization of Monkey interactions 
-Monkeysp <- graph_from_data_frame(final, directed = FALSE, vertices = NULL)
+Monkeysp <- graph_from_data_frame(Monkeys, directed = FALSE, vertices = NULL)
 plot(aerialplot, vertex.label = NA, layout = layout_with_fr, main="Aerial treatment") 
 
 datam <- toVisNetworkData(Monkeysp)
