@@ -110,6 +110,9 @@ visIgraphLayout(layout = "layout_with_sugiyama") %>%
 
 # Compare centrality of similarity index between an aerial and tactile treatments. 
 ```{r}
+
+## EM updating this seperately... 
+
 # eigenvector centrality for snakes in the aerial treatment
 cent_aerial <- (eigen_centrality(aerialplot))
 # eigenvector centrality for snakes in the tactile treatment
@@ -119,10 +122,21 @@ cent_tact <- (eigen_centrality(p1))
 # Statistical Approach
 To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected.
 ```{r}
-# Freedman TEST? 
+# First we need to combine our centrality measures for both the aerial and tactical conditiosn into one dataframe, so 3 columns: id, treatment (aerial or tactile), centrality score and add in the name of the dataframe in the viper_wilcox analysis below and this should (hopefully) work...
+
+#insert new dataframe here 
+
+
+# Wilcoxon Test to compare the centrality scores for the vipers in the two different treatments 
+viper_wilcox <- # dataname  %>& 
+  wilcox_test(centrality ~ treatment, paired = TRUE, p.adjust.method = "none")
+viper_wilcox
+
 ```
 
-# Another Example Using Association Data with Aesthetic Changes 
+
+# Another Example Using Association to Demonstarte Aesthetic Changes 
+In this new example, we showcase a selection of different aesthetic changes you can utilize in your visualization of network data based on monkey association patterns. 
 ```{r}
 # Monkeys also work 
 Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
@@ -150,8 +164,8 @@ head(new)
 
 
 # This is how you can replace numbers with names 
-Sname <- c(x$name)
-Sno <- as.numeric(1:nrow(x))
+Sname <- c(Monkeys$name)
+Sno <- as.numeric(1:nrow(Monkeys))
 Source <- bind_cols(name = Sname, number = Sno)
 Source
 
@@ -161,7 +175,6 @@ final <- inner_join(final, Source, by = c("ind2" = "number"))
 final <- select(final, name.x, name.y, values)
 final
 
-
 # Visualization of Monkey interactions 
 Monkeysp <- graph_from_data_frame(final, directed = FALSE, vertices = NULL)
 plot(aerialplot, vertex.label = NA, layout = layout_with_fr, main="Aerial treatment") 
@@ -170,11 +183,22 @@ datam <- toVisNetworkData(Monkeysp)
 visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
 visIgraphLayout(layout = "layout_with_sugiyama")
 
+# New monkey graph: 
+#igraph
+monk = graph.data.frame(final[,c('name.x','name.y')], directed = FALSE, vertices = NULL)
+E(monk)$weight = final$values
+head(monk)
+plot(monk, vertex.label = NA, layout = layout_with_fr, main="Monkeys") 
 
-# Will probably use this resource https://rpubs.com/pjmurphy/313180
-degree(Monkeysp, v = V(Monkeysp), 
-      mode = c("all", "out", "in", "total"), 
-      loops = TRUE, normalized = FALSE)
+#then in visNetwrk 
+datam <- toVisNetworkData(monk)
+visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
+  visIgraphLayout(layout = "layout_with_sugiyama")
+
+# working out centrality 
+centrality <- evcent(monk)$vector
+head(centrality) 
+
 ````
 
 # Inferring Results 
@@ -185,5 +209,5 @@ Networks are made up of two essential components, 'nodes' (represented by symbol
 Using the melt function bbe2020() to convert matrix data into a dataframe for network visualization & analysis
 Using {igraph}: graph_from_data_frame() and {visNetwork}: toVisNetworkData() to generate sociograms 
 Aesthetic changes in visNetwork sociograms <add in brief code example here>
-Centrality statistics in igraph <code example here>
+Centrality statistics in igraph evcent()
 The wilcox_test() is a non-parametric statistical test which compares two paired groups 
