@@ -119,13 +119,24 @@ cent_tact <- (eigen_centrality(p1))
 # Statistical Approach
 To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected.
 ```{r}
-# Freedman TEST? 
+# Freedman TEST? <- this is for three groups so i think a wilcoxon comparing two paired groups may be better? 
+
+# First we need to combine our centrality measures for both the aerial and tactical conditiosn into one dataframe, so 3 columns: id, treatment (aerial or tactile), centrality score and add in the name of the dataframe in the viper_wilcox analysis below and this should (hopefully) work...
+
+# Wilcoxon Test to compare the centrality scores for the vipers in the two different treatments 
+viper_wilcox <- # dataname  %>& 
+  wilcox_test(centrality ~ treatment, paired = TRUE, p.adjust.method = "none")
+viper_wilcox
+  
 ```
 
-# Another Example Using Association Data with Aesthetic Changes 
+# Another Example Using Association to Demonstarte Aesthetic Changes 
+In this new example, we showcase a selection of different aesthic changes you can utilie in your visiualization of network data based on monkey association patterns. 
 ```{r}
-# Monkeys also work 
-x <- read_csv("EM_monkey.csv", col_names=TRUE)
+# first load in the new dataset
+x <- read_csv("EM_monkey.csv", col_names=TRUE) 
+
+# then remove the lower part of the matrix to delete the duplicate enteries. 
 colnames(Monkeys) <-  c("name", 1:length(Monkeys))
 Monkeys <- select(Monkeys, -name)
 Monkeys <- as.matrix(Monkeys)
@@ -134,6 +145,7 @@ Monkeys <- setNames(melt(Monkeys), c('Source', 'Target', 'Weight'))
 Monkeys <- filter(Monkeys, !is.na(Weight))
 summary(Monkeys)
 
+# next use the melt function to convert the matrix data into a dataframe 
 melt_matrix_4_visNetwork <- function(z){
   colnames(x) <- c("names", 1:length(x))
   x <- select(x, -names) %>%
@@ -181,4 +193,10 @@ degree(Monkeysp, v = V(Monkeysp),
 Individual snakes typically behaved significantly different between treatments as expected. 
 
 # Concept Overview 
-
+ Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes
+ Using the melt function bbe2020() to convert matrix data into a dataframe for network visualization & analysis
+ Using {igraph}: graph_from_data_frame() and {visNetwork}: toVisNetworkData() to generate sociograms 
+ Aesthic changes in visNetwork sociograms <add in brief code example here>
+ Centrality statistics in igraph <code example here>
+ The wilcox_test() is a non-parametric statistical test which compares two paired groups 
+ 

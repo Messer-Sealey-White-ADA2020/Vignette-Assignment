@@ -5,7 +5,7 @@ Author:
     person(given = "Emily",
     family = "Messer",
     role = c("aut", "cre"),
-    email = "emily.j.e.messer@gmail.com")
+    email = "emilymesser@utexas.edu")
     person(given = "Brittney", 
     family = "White", 
     email = "bawhite@utexas.edu", role = c("aut", "cre"))
