@@ -7,8 +7,8 @@ library(visNetwork)
 x <- read_csv("blacktreatments_heads2020f.csv", col_names=TRUE)
 
 ### Part of the function that works
-melt_matrix_4_visNetwork <- function(z){
-  colnames(x) <- c("names", 1:length(x))
+melt_matrix_4_visNetwork <- function(x){
+  colnames(x) <- c("names", 1:nrow(x))
   x <- select(x, -names) %>%
   as.matrix()
   x[lower.tri(x, diag=TRUE)] <- NA
@@ -20,4 +20,4 @@ melt_matrix_4_visNetwork <- function(z){
 
 new <- melt_matrix_4_visNetwork(x)  
 head(new)
-
+unique(new$ind1)

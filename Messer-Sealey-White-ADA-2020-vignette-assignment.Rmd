@@ -49,7 +49,7 @@ Networks are made up of two essential components, 'nodes' (represented by symbol
 # melting data matrix for aerial treatment
 meltaerial <- meltme(aerial)
 meltaerial
-
+unique(meltaerial$ind2)
 # melting data matirx for tactile treatment 
 melttactile <- meltme(tactile)
 melttactile
@@ -63,7 +63,6 @@ Here we specifically visualize an individual snake's antipredator behavior divid
 aerialplot <- graph_from_data_frame(meltaerial, directed = FALSE, vertices = NULL)
 # print iGraph using a sphere layout 
 plot(aerialplot, vertex.label = NA, layout = layout_on_sphere, main="Aerial treatment")
-
 
 # iGraph network plot of tactile treatment
 tactileplot <- graph_from_data_frame(melttactile, directed = FALSE, vertices = NULL)
@@ -112,7 +111,6 @@ To determine if there is any significant difference between the predator respons
 
 #insert new dataframe here 
 
-
 # Wilcoxon Test to compare the centrality scores for the snakes in the two different treatments 
 snake_wilcox <- # dataname  %>& 
   wilcox_test(centrality ~ treatment, paired = TRUE, p.adjust.method = "none")
@@ -124,30 +122,10 @@ snake_wilcox
 # Another Example Using Association to Demonstarte Aesthetic Changes 
 In this new example, we showcase a selection of different aesthetic changes you can utilize in your visualization of network data based on monkey association patterns. 
 ```{r}
-# Monkeys also work 
+# Read n another dataset, here we use monkeys 
 Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
-colnames(Monkeys) <-  c("name", 1:length(Monkeys))
-Monkeys <- select(Monkeys, -name)
-Monkeys <- as.matrix(Monkeys)
-Monkeys[lower.tri(Monkeys, diag=TRUE)] <- NA 
-Monkeys <- setNames(melt(Monkeys), c('Source', 'Target', 'Weight'))
-Monkeys <- filter(Monkeys, !is.na(Weight))
-summary(Monkeys)
-
-melt_matrix_4_visNetwork <- function(z){
-  colnames(x) <- c("names", 1:length(x))
-  x <- select(x, -names) %>%
-  as.matrix()
-  x[lower.tri(x, diag=TRUE)] <- NA
-  x <- melt(x)
-  x <- setNames(x, c('ind1', 'ind2', 'values'))
-  x <- filter(x, !is.na(values))
-  return(x)
-}
-
-new <- melt_matrix_4_visNetwork(Monkeys)  
+new <- meltme(new)
 head(new)
-
 
 # This is how you can replace numbers with names 
 Sname <- c(Monkeys$name)
@@ -184,7 +162,6 @@ visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
 # working out centrality 
 centrality <- evcent(monk)$vector
 head(centrality) 
-
 ````
 
 # Inferring Results 
