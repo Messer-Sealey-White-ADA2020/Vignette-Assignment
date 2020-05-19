@@ -98,7 +98,7 @@ visIgraphLayout(layout = "layout_with_sugiyama")
 ## figuring out aerial centrality
 head(meltaerial) ## checking header names from aerial df
 
-aeri <- graph_from_data_frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
+aeri <- graph_data_frame(meltaerial[,c('ind1','ind2')], directed = FALSE, vertices = NULL)
 E(aeri)$weight = meltaerial$values
 head(aeri)
 plot(aeri, vertex.label = NA, layout = layout_with_fr, main="Aerial Treatment") 
@@ -192,6 +192,12 @@ visNetwork(nodes = datam$nodes, edges = datam$edges, height = "500px") %>%
 # working out centrality 
 centrality <- evcent(monk)$vector
 head(centrality) 
+
+centralityaerialplot <- evcent(aerialplot)$vector
+centralityaerialplot
+
+centralitytactileplot <- evcent(tactileplot)$vector
+centralitytactileplot
 ````
 
 # Inferring Results 
