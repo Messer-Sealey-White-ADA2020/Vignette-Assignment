@@ -16,11 +16,11 @@ library(tidyverse) # to enable tidying of data
 library(reshape2) # to use with melt function to convert matrix to objects igraph can plot
 library(igraph) # to make an igraph object ie. network visualization of matrix values
 library(visNetwork) # to make your igraph object prettier using visNetwork
-library(bbe2020) # adds functionality to melt by converting a matrix generated in other softwares or elsewhere and converting to a form easily used by igraph
+library(bbe2020) # adds functionality to melt by converting a matrix generated in other software or elsewhere and converting to a form easily used by igraph
 ```
 
 # Introduce dataset 
-A group of snakes were exposed to the presence of two "simulated" predators  (ie. two treatments), one with a simulated potential aerial "attack" and another with a simulated tactile "attack". A matrix was generated using Pearson correlation coefficient to calculate the behavior similarity indices between all snake's antipredator head movement behavior.  
+A group of snakes were exposed to the presence of two "simulated" predators (i.e. two treatments), one with a simulated potential aerial "attack" and another with a simulated tactile "attack". A matrix was generated using Pearson correlation coefficient to calculate the behavior similarity indices between all snake's antipredator head movement behavior.  
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -55,7 +55,7 @@ melttactile
 ```
 
 # Data Visualization
-Here we specifically visualize an individual snake's antipredator behavior divided by all individual's antipredator behavior towards the same type of predator represented as a ratio (or similarity index) in a sociogram. Each sociogram visualizes the similarity of antipredator behavior for either predator among the snakes. Edges represent the similarity index. Centrality is represented by node size.
+Here we specifically visualize an individual snake's antipredator behavior divided by all individual's antipredator behavior towards the same type of predator represented as a ratio (or similarity index) in a sociogram. Each sociogram visualizes the similarity of antipredator behavior for either predator among the snakes. Edges represent the similarity index. 
 
 ```{r}
 # iGraph network plot of aerial treatment
@@ -65,7 +65,7 @@ plot(aerialplot, vertex.label = NA, layout = layout_on_sphere, main="Aerial trea
 
 # iGraph network plot of tactile treatment
 tactileplot <- graph_from_data_frame(melttactile, directed = FALSE, vertices = NULL)
-# print iGraph using a force-directed layout (positions the nodes so that the edges have similar lengthes and there are as few crossing edges as possible)
+# print iGraph using a force-directed layout (positions the nodes so that the edges have similar lengths and there are as few crossing edges as possible)
 plot(tactileplot, vertex.label = NA, layout = layout_with_fr, main="Tactile treatment")
 
 # converting igraph to visnetwork for aerial treatment
@@ -144,7 +144,7 @@ centralitytactileplot
 # Statistical Approach
 To determine if there is any significant difference between the predator responses of our snakes towards the two artificially simulated predators (aerial and tactile) we compared the snakes scores of centrality (connectedness). Centrality is a network statistic which is a measure of being well-connected.
 ```{r}
-# First we need to combine our centrality measures for both the aerial and tactical conditiosn into one dataframe, so 3 columns: id, treatment (aerial or tactile), centrality score and add in the name of the dataframe in the snake_wilcox analysis below and this should (hopefully) work...
+# First, we need to combine our centrality measures for both the aerial and tactical conditions into one dataframe, so 3 columns: id, treatment (aerial or tactile), centrality score and add in the name of the dataframe in the snake_wilcox analysis below and this should (hopefully) work...
 
 #insert new dataframe here
 ######
@@ -191,7 +191,7 @@ snake_wilcox
 # Another Example Using Association to Demonstrate Aesthetic Changes 
 In this new example, we showcase a selection of different aesthetic changes you can utilize in your visualization of network data based on monkey association patterns. 
 ```{r}
-# Read n another dataset, here we use monkeys 
+# Read in another dataset, here we use monkeys 
 Monkeys <- read_csv("EM_monkey.csv", col_names=TRUE)
 new <- meltme(new)
 head(new)
@@ -235,9 +235,9 @@ head(centrality)
 Individual snakes typically behaved significantly different between treatments as expected. 
 
 # Concept Overview 
-Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by lines between the nodes). These lines typically indicate an interaction between the nodes
-Using the melt function bbe2020() to convert matrix data into a dataframe for network visualization & analysis
-Using {igraph}: graph_from_data_frame() and {visNetwork}: toVisNetworkData() to generate sociograms 
-Aesthetic changes in visNetwork sociograms <add in brief code example here>
-Centrality statistics in igraph evcent()
-The wilcox_test() is a non-parametric statistical test which compares two paired groups 
+# Networks are made up of two essential components, 'nodes' (represented by symbols) and ‘edges’ (represented by  lines between the nodes). These lines typically indicate an interaction between the nodes
+# Using the melt function bbe2020() to convert matrix data into a dataframe for network visualization & analysis
+# Using {igraph}: graph_from_data_frame() and {visNetwork}: toVisNetworkData() to generate sociograms 
+# Aesthetic changes in visNetwork sociograms <add in brief code example here>
+# Eigenvector centrality statistics in igraph evcent()$vector
+# The wilcox_test() is a non-parametric statistical test which compares two paired groups 
